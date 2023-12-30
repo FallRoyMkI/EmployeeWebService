@@ -1,3 +1,4 @@
+using EmployeeWebService.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeWebService.API.Controllers;
@@ -25,13 +26,13 @@ public class EmployeeController : ControllerBase
     [HttpGet(Name = "GetEmployeesByCompanyId")]
     public IEnumerable<Employee> GetEmployeesByCompanyId()
     {
-        return new Employee;
+        return new List<Employee> ();
     }
 
     [HttpGet(Name = "GetEmployeesByDepartmentId")]
     public IEnumerable<Employee> GetEmployeesByDepartmentId()
     {
-        return new Employee;
+        return new List<Employee>();
     }
 
     [HttpPatch(Name = "UpdateEmployee")]
