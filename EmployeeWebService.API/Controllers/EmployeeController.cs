@@ -1,7 +1,7 @@
 using EmployeeWebService.Contracts;
-using EmployeeWebService.Models;
 using EmployeeWebService.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace EmployeeWebService.API.Controllers;
 [Route("[controller]")]
@@ -34,10 +34,10 @@ public class EmployeeController : ControllerBase
         return Ok(_employeeManager.GetEmployeesByCompanyId(id));
     }
 
-    [HttpGet("/department/")]
-    public IActionResult GetEmployeesByDepartment([FromQuery] DepartmentViewModel model)
+    [HttpGet("/department/{id}")]
+    public IActionResult GetEmployeesByDepartmentId([FromRoute] int id)
     {
-        return Ok(_employeeManager.GetEmployeesByDepartment(model));
+        return Ok(_employeeManager.GetEmployeesByDepartmentId(id));
     }
 
     [HttpPatch("/update")]

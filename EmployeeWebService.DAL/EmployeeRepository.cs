@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using EmployeeWebService.Contracts;
+using EmployeeWebService.Models;
 using EmployeeWebService.Models.Entities;
 using EmployeeWebService.Models.ViewModels;
 using Microsoft.Data.SqlClient;
@@ -17,7 +18,7 @@ public class EmployeeRepository : IEmployeeRepository
         _connectionString = options.Value.ConnectionString;
     }
 
-    public int AddEmployee(Employee model)
+    public int AddEmployee(EmployeeRequestModel model)
     {
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -36,6 +37,20 @@ public class EmployeeRepository : IEmployeeRepository
         return parameters.Get<int>("@Id");
     }
 
+    public bool IsExist(int id)
+    {
+        var query = @"SELECT COUNT(*) FROM [dbo].[Employees] 
+        WHERE Id = @Id AND IsDeleted = 0";
+
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id);
+
+        return connection.ExecuteScalar<int>(query, parameters) > 0;
+    }
+
     public void DeleteEmployee(int id)
     {
         using var connection = new SqlConnection(_connectionString);
@@ -47,43 +62,27 @@ public class EmployeeRepository : IEmployeeRepository
         connection.Execute("DeleteEmployee", parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public bool IsExist(int id)
-    {
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
-        var query = @"
-        SELECT COUNT(*) FROM [dbo].[Employees] 
-        WHERE Id = @Id AND IsDeleted = 0";
-
-        var parameters = new DynamicParameters();
-        parameters.Add("@Id", id);
-
-        return connection.ExecuteScalar<int>(query, parameters) > 0;
-    }
-
     public IEnumerable<EmployeeViewModel> GetEmployeesByCompanyId(int id)
     {
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
-        string sqlQuery = @"
-        SELECT E.Id, E.Name, E.Surname, E.Phone, E.CompanyId, P.*, D.*
+        string sqlQuery = @"SELECT E.Id, E.Name, E.Surname, E.Phone, E.CompanyId, P.*, D.*
         FROM Employees AS E
         LEFT JOIN Passports AS P ON E.PassportId = P.Id
-         JOIN Departments AS D ON E.DepartmentId = D.Id
+        JOIN Departments AS D ON E.DepartmentId = D.Id
         WHERE E.CompanyId = @Id AND E.IsDeleted = 0;";
+
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
 
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        return connection.Query<EmployeeViewModel, PassportViewModel, DepartmentViewModel, EmployeeViewModel>
+        return connection.Query<EmployeeViewModel, PassportRequestModel, DepartmentRequestModel, EmployeeViewModel>
         (sqlQuery,
-            (EmployeeViewModel, PassportViewModel, DepartmentViewModel) =>
+            (employee, passport, department) =>
             {
-                EmployeeViewModel.Passport = PassportViewModel;
-                EmployeeViewModel.Department = DepartmentViewModel;
-                return EmployeeViewModel;
+                employee.Passport = passport;
+                employee.Department = department;
+                return employee;
             },
             parameters,
             splitOn: "Id").ToList();
@@ -91,26 +90,25 @@ public class EmployeeRepository : IEmployeeRepository
 
     public IEnumerable<EmployeeViewModel> GetEmployeesByDepartmentId(int id)
     {
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
-        string sqlQuery = @"
-        SELECT E.Id, E.Name, E.Surname, E.Phone, E.CompanyId, P.*, D.*
+        string sqlQuery = @"SELECT E.Id, E.Name, E.Surname, E.Phone, E.CompanyId, P.*, D.*
         FROM Employees AS E
         LEFT JOIN Passports AS P ON E.PassportId = P.Id
          JOIN Departments AS D ON E.DepartmentId = D.Id
         WHERE E.DepartmentId = @Id AND E.IsDeleted = 0;";
 
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        return connection.Query<EmployeeViewModel, PassportViewModel, DepartmentViewModel, EmployeeViewModel>
+        return connection.Query<EmployeeViewModel, PassportRequestModel, DepartmentRequestModel, EmployeeViewModel>
         (sqlQuery,
-            (EmployeeViewModel, PassportViewModel, DepartmentViewModel) =>
+            (employee, passport, department) =>
             {
-                EmployeeViewModel.Passport = PassportViewModel;
-                EmployeeViewModel.Department = DepartmentViewModel;
-                return EmployeeViewModel;
+                employee.Passport = passport;
+                employee.Department = department;
+                return employee;
             },
             parameters,
             splitOn: "Id").ToList();

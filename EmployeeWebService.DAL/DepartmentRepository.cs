@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using EmployeeWebService.Contracts;
-using EmployeeWebService.Models.Entities;
+using EmployeeWebService.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
 
@@ -15,52 +15,49 @@ public class DepartmentRepository : IDepartmentRepository
         _connectionString = options.Value.ConnectionString;
     }
 
-    public bool IsExist(Department model)
+
+    public int? GetDepartmentId(DepartmentRequestModel model)
     {
+        var query = @"SELECT Id FROM [dbo].[Departments]
+        WHERE Name = @Name AND Phone = @Phone";
+
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
-
-        var query = @"
-        SELECT COUNT(*) FROM [dbo].[Departments] 
-        WHERE NAME = @Name and Phone = @Phone";
 
         var parameters = new DynamicParameters();
         parameters.Add("@Name", model.Name);
         parameters.Add("@Phone", model.Phone);
 
-        return connection.ExecuteScalar<int>(query, parameters) > 0;
+        return connection.QuerySingleOrDefault<int?>(query, parameters);
     }
 
-    public void AddDepartment(Department model)
+    public int AddDepartment(DepartmentRequestModel model)
     {
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
-        var query = @"
-        INSERT INTO [dbo].[Departments] (Name, Phone)
+        var query = @"INSERT INTO [dbo].[Departments] (Name, Phone)
+        OUTPUT INSERTED.Id
         VALUES (@Name, @Phone)";
 
-        var parameters = new DynamicParameters();
-        parameters.Add("@Name", model.Name);
-        parameters.Add("@Phone", model.Phone);
-
-        connection.Execute(query, parameters);
-        connection.Close();
-    }
-
-    public int GetDepartmentId(Department model)
-    {
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
-
-        var query = @"
-        SELECT Id FROM [dbo].[Departments] 
-        WHERE NAME = @Name and Phone = @Phone";
 
         var parameters = new DynamicParameters();
         parameters.Add("@Name", model.Name);
         parameters.Add("@Phone", model.Phone);
 
         return connection.QuerySingle<int>(query, parameters);
+    }
+
+    public bool IsExist(int id)
+    {
+        var query = @"SELECT COUNT(*) FROM [dbo].[Departments]
+        WHERE Id = @Id";
+
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id);
+
+        return connection.QuerySingle<int>(query, parameters) > 0;
     }
 }

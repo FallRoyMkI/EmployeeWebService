@@ -21,13 +21,6 @@ public class DatabaseInitializer
 
         connection.Execute(@"
                     IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
-                    WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Companies')
-                    CREATE TABLE [dbo].[Companies] (
-                    [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
-                    [Name] [nvarchar] (100) NOT NULL)");
-
-        connection.Execute(@"
-                    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES 
                     WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Departments')    
                     CREATE TABLE [dbo].[Departments] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
@@ -54,7 +47,6 @@ public class DatabaseInitializer
 	                [PassportId] [int] NOT NULL,
 	                [DepartmentId] [int] NOT NULL,
                     [IsDeleted] [bit]  DEFAULT 0,
-                    FOREIGN KEY (CompanyId) REFERENCES Companies(Id),
                     FOREIGN KEY (DepartmentId) REFERENCES Departments(Id),
                     FOREIGN KEY (PassportId) REFERENCES Passports(Id))");
 

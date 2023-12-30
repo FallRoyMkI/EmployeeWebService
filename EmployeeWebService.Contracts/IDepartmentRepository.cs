@@ -1,10 +1,10 @@
-﻿using EmployeeWebService.Models.Entities;
+﻿using EmployeeWebService.Models.ViewModels;
 
 namespace EmployeeWebService.Contracts;
 
 public interface IDepartmentRepository
 {
-    public bool IsExist(Department model);
-    public void AddDepartment(Department model);
-    public int GetDepartmentId(Department model);
+    public int? GetDepartmentId(DepartmentRequestModel model);
+    public int AddDepartment(DepartmentRequestModel model);
+    public bool IsExist(int id);
 }

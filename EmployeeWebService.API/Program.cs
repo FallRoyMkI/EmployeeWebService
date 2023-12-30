@@ -17,11 +17,16 @@ var databaseSection = builder.Configuration.GetSection(DatabaseOptions.SectionKe
 databaseSection.Bind(d);
 builder.Services.AddSingleton(Options.Create(d));
 builder.Services.AddSingleton<DatabaseInitializer>();
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+builder.Services.AddScoped<IPassportManager, PassportManager>();
 builder.Services.AddScoped<IPassportRepository, PassportRepository>();
+
+builder.Services.AddScoped<IDepartmentManager, DepartmentManager>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
-builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+
 builder.Services.AddScoped<IEmployeeManager, EmployeeManager>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
 
 builder.Services.BuildServiceProvider().GetService<DatabaseInitializer>().Initialize();
 

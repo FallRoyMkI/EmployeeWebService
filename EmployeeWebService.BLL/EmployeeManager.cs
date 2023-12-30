@@ -1,11 +1,6 @@
-﻿using System.Reflection;
-using EmployeeWebService.Contracts;
-using EmployeeWebService.DAL;
+﻿using EmployeeWebService.Contracts;
 using EmployeeWebService.Models;
-using EmployeeWebService.Models.Entities;
 using EmployeeWebService.Models.ViewModels;
-using Microsoft.Extensions.Options;
-using static Dapper.SqlMapper;
 
 namespace EmployeeWebService.BLL
 {
@@ -14,61 +9,35 @@ namespace EmployeeWebService.BLL
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IDepartmentRepository _departmentRepository;
         private readonly IPassportRepository _passportRepository;
-        private readonly ICompanyRepository _companyRepository;
-        public EmployeeManager(IEmployeeRepository employeeRepository, ICompanyRepository companyRepository,
+        public EmployeeManager(IEmployeeRepository employeeRepository,
             IDepartmentRepository departmentRepository, IPassportRepository passportRepository)
         {
             _employeeRepository = employeeRepository;
             _departmentRepository = departmentRepository;
             _passportRepository = passportRepository;
-            _companyRepository = companyRepository;
         }
 
         public int AddEmployee(EmployeeRequestModel model)
         {
-            Department department = new()
+            if (!_passportRepository.IsExist(model.DepartmentId))
             {
-                Name = model.Name,
-                Phone = model.Phone
-            };
-            if (!_departmentRepository.IsExist(department))
-            {
-                _departmentRepository.AddDepartment(department);
+                throw new Exception("There is no passport with this id");
             }
-            int departmentId = _departmentRepository.GetDepartmentId(department);
-
-            Passport passport = new()
+            if (!_departmentRepository.IsExist(model.DepartmentId))
             {
-                Type = model.Passport.Type,
-                Number = model.Passport.Number
-            };
-            int passportId = _passportRepository.AddPassport(passport);
-
-            int id = model.CompanyId;
-            if (!_companyRepository.IsExist(model.CompanyId))
-            {
-                id = _companyRepository.AddCompany();
+                throw new Exception("There is no department with this id");
             }
-            
-            Employee entity = new Employee()
-            {
-                Name = model.Name,
-                Surname = model.Surname,
-                Phone = model.Phone,
-                CompanyId = id,
-                DepartmentId = departmentId,
-                PassportId = passportId
-            };
 
-            return _employeeRepository.AddEmployee(entity);
+            return _employeeRepository.AddEmployee(model);
         }
 
         public void DeleteEmployee(int id)
         {
             if (!_employeeRepository.IsExist(id))
             {
-                throw new Exception ("There is no employee with these id");
+                throw new Exception("There is no employee with this id");
             }
+
             _employeeRepository.DeleteEmployee(id);
         }
 
@@ -77,20 +46,9 @@ namespace EmployeeWebService.BLL
             return _employeeRepository.GetEmployeesByCompanyId(id);
         }
 
-        public IEnumerable<EmployeeViewModel> GetEmployeesByDepartment(DepartmentViewModel model)
+        public IEnumerable<EmployeeViewModel> GetEmployeesByDepartmentId(int id)
         {
-            Department department = new()
-            {
-                Name = model.Name,
-                Phone = model.Phone
-            };
-            if (!_departmentRepository.IsExist(department))
-            {
-                throw new Exception("There is no department with these parameters");
-            }
-
-            int departmentId = _departmentRepository.GetDepartmentId(department);
-            return _employeeRepository.GetEmployeesByDepartmentId(departmentId);
+            return _employeeRepository.GetEmployeesByDepartmentId(id);
         }
     }
 }
