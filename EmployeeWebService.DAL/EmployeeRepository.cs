@@ -32,11 +32,7 @@ public class EmployeeRepository : IEmployeeRepository
 
         connection.Execute("AddEmployee", parameters, commandType: CommandType.StoredProcedure);
 
-        int id = parameters.Get<int>("@Id");
-
-        connection.Close();
-
-        return id;
+        return parameters.Get<int>("@Id");
     }
 }
 

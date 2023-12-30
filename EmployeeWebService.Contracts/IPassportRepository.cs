@@ -2,7 +2,7 @@
 
 namespace EmployeeWebService.Contracts;
 
-public interface IEmployeeRepository
+public interface IPassportRepository
 {
-    public int AddEmployee(Employee model);
+    public int AddPassport(Passport model);
 }

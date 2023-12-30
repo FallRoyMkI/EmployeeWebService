@@ -12,7 +12,8 @@ builder.Services.AddSwaggerGen();
 var databaseSection = builder.Configuration.GetSection(DatabaseOptions.SectionKey);
 builder.Services.AddSingleton(Options.Create(databaseSection));
 builder.Services.AddSingleton<DatabaseInitializer>();
-builder.Services.AddScoped<IEmployeeRepository,EmployeeRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IPassportRepository, PasportRepository>();
 
 builder.Services.BuildServiceProvider().GetService<DatabaseInitializer>().Initialize();
 
