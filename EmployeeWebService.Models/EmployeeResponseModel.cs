@@ -2,7 +2,7 @@
 
 namespace EmployeeWebService.Models;
 
-public class EmployeeViewModel
+public class EmployeeResponseModel
 {
     public string Name { get; set; }
     public string Surname { get; set; }

@@ -41,8 +41,9 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPatch("/update")]
-    public IActionResult UpdateEmployee()
+    public IActionResult UpdateEmployee(EmployeeUpdateModel model)
     {
+        _employeeManager.UpdateEmployee(model);
         return Ok();
     }
 }

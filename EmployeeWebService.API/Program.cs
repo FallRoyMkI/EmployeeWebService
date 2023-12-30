@@ -2,9 +2,7 @@ using EmployeeWebService.API;
 using EmployeeWebService.BLL;
 using EmployeeWebService.Contracts;
 using EmployeeWebService.DAL;
-using EmployeeWebService.Models.Entities;
 using Microsoft.Extensions.Options;
-using static System.Collections.Specialized.BitVector32;
 
 var builder = WebApplication.CreateBuilder(args);
 

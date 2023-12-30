@@ -1,4 +1,5 @@
 ﻿using EmployeeWebService.Contracts;
+using EmployeeWebService.Models.RequestModels;
 using EmployeeWebService.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,13 @@ namespace EmployeeWebService.API.Controllers
         public IActionResult GetOrAddPassport(PassportRequestModel passport)
         {
             return Ok(_passportManager.GetOrAddPassport(passport));
+        }
+
+        [HttpPost("/update")]
+        public IActionResult UpdatePassportById(PassportUpdateModel passport)
+        {
+            _passportManager.UpdatePassport(passport);
+            return Ok();
         }
     }
 }
