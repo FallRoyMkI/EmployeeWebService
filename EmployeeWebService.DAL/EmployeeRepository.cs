@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Linq;
 using Dapper;
 using EmployeeWebService.Contracts;
 using EmployeeWebService.Models.Entities;
@@ -85,7 +84,34 @@ public class EmployeeRepository : IEmployeeRepository
                 EmployeeViewModel.Passport = PassportViewModel;
                 EmployeeViewModel.Department = DepartmentViewModel;
                 return EmployeeViewModel;
-            }, 
+            },
+            parameters,
+            splitOn: "Id").ToList();
+    }
+
+    public IEnumerable<EmployeeViewModel> GetEmployeesByDepartmentId(int id)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        string sqlQuery = @"
+        SELECT E.Id, E.Name, E.Surname, E.Phone, E.CompanyId, P.*, D.*
+        FROM Employees AS E
+        LEFT JOIN Passports AS P ON E.PassportId = P.Id
+         JOIN Departments AS D ON E.DepartmentId = D.Id
+        WHERE E.DepartmentId = @Id AND E.IsDeleted = 0;";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id);
+
+        return connection.Query<EmployeeViewModel, PassportViewModel, DepartmentViewModel, EmployeeViewModel>
+        (sqlQuery,
+            (EmployeeViewModel, PassportViewModel, DepartmentViewModel) =>
+            {
+                EmployeeViewModel.Passport = PassportViewModel;
+                EmployeeViewModel.Department = DepartmentViewModel;
+                return EmployeeViewModel;
+            },
             parameters,
             splitOn: "Id").ToList();
     }

@@ -1,4 +1,5 @@
-﻿using EmployeeWebService.Contracts;
+﻿using System.Reflection;
+using EmployeeWebService.Contracts;
 using EmployeeWebService.DAL;
 using EmployeeWebService.Models;
 using EmployeeWebService.Models.Entities;
@@ -66,7 +67,7 @@ namespace EmployeeWebService.BLL
         {
             if (!_employeeRepository.IsExist(id))
             {
-                throw new Exception ("Employee with such id not exist");
+                throw new Exception ("There is no employee with these id");
             }
             _employeeRepository.DeleteEmployee(id);
         }
@@ -74,6 +75,22 @@ namespace EmployeeWebService.BLL
         public IEnumerable<EmployeeViewModel> GetEmployeesByCompanyId(int id)
         {
             return _employeeRepository.GetEmployeesByCompanyId(id);
+        }
+
+        public IEnumerable<EmployeeViewModel> GetEmployeesByDepartment(DepartmentViewModel model)
+        {
+            Department department = new()
+            {
+                Name = model.Name,
+                Phone = model.Phone
+            };
+            if (!_departmentRepository.IsExist(department))
+            {
+                throw new Exception("There is no department with these parameters");
+            }
+
+            int departmentId = _departmentRepository.GetDepartmentId(department);
+            return _employeeRepository.GetEmployeesByDepartmentId(departmentId);
         }
     }
 }

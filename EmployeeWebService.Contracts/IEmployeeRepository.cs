@@ -9,4 +9,5 @@ public interface IEmployeeRepository
     public void DeleteEmployee(int id);
     public bool IsExist(int id);
     public IEnumerable<EmployeeViewModel> GetEmployeesByCompanyId(int id);
+    public IEnumerable<EmployeeViewModel> GetEmployeesByDepartmentId(int id);
 }
