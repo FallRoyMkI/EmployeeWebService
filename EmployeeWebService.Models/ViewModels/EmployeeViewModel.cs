@@ -1,4 +1,6 @@
-﻿namespace EmployeeWebService.Models;
+﻿using EmployeeWebService.Models.Entities;
+
+namespace EmployeeWebService.Models.ViewModels;
 
 public class EmployeeViewModel
 {
@@ -7,6 +9,6 @@ public class EmployeeViewModel
     public string Surname { get; set; }
     public string Phone { get; set; }
     public int CompanyId { get; set; }
-    public Passport Passport { get; set; }
-    public Department Department { get; set; }
+    public PassportViewModel Passport { get; set; }
+    public DepartmentViewModel Department { get; set; }
 }

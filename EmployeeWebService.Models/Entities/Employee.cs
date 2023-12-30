@@ -1,4 +1,4 @@
-﻿namespace EmployeeWebService.Models;
+﻿namespace EmployeeWebService.Models.Entities;
 
 public class Employee
 {

@@ -1,4 +1,4 @@
-using EmployeeWebService.Models;
+using EmployeeWebService.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeWebService.API.Controllers;
