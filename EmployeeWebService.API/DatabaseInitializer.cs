@@ -22,22 +22,19 @@ public class DatabaseInitializer
         connection.Execute(@"
                 CREATE TABLE IF NOT EXISTS [dbo].[Companies] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
-                    [Name] [nvarchar] (100) NOT NULL
-                )");
+                    [Name] [nvarchar] (100) NOT NULL)");
 
         connection.Execute(@"
                 CREATE TABLE IF NOT EXISTS [dbo].[Departments] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
                     [Name] [nvarchar](100) NOT NULL,
-	                [Phone] [nvarchar](20) NOT NULL,
-                )");
+	                [Phone] [nvarchar](20) NOT NULL)");
 
         connection.Execute(@"
                 CREATE TABLE IF NOT EXISTS [dbo].[Passports] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
                     [Type] [nvarchar](100) NOT NULL,
-	                [Number] [nvarchar](30) NOT NULL,
-                )");
+	                [Number] [nvarchar](30) NOT NULL)");
 
         connection.Execute(@"
                 CREATE TABLE IF NOT EXISTS [dbo].[Employees] (
@@ -50,8 +47,23 @@ public class DatabaseInitializer
 	                [DepartmentId] [int] NOT NULL,
                     FOREIGN KEY (CompanyId) REFERENCES Companies(Id),
                     FOREIGN KEY (DepartmentId) REFERENCES Departments(Id),
-                    FOREIGN KEY (PassportId) REFERENCES Passports(Id)
-                )");
+                    FOREIGN KEY (PassportId) REFERENCES Passports(Id))");
+
+        connection.Execute(@"
+                CREATE PROCEDURE [dbo].[AddEmployee]
+                    @Name NVARCHAR(50),
+                    @Surname NVARCHAR(50),
+	                @Phone NVARCHAR(20),
+	                @CompanyId int,
+	                @PassportId int,
+	                @DepartmentId int,
+                    @Id INT OUTPUT
+                    AS
+                    BEGIN
+                    INSERT INTO Employees (Name, Surname, Phone, CompanyId, PassportId, DepartmentId)
+                    VALUES (@Name, @Surname, @Phone, @CompanyId, @PassportId, @DepartmentId);
+                    SET @Id = SCOPE_IDENTITY();
+                    END");
 
         connection.Close();
     }
