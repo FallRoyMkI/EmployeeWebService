@@ -21,8 +21,9 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpDelete("/delete")]
-    public IActionResult DeleteEmployee()
+    public IActionResult DeleteEmployee(int id)
     {
+        _employeeManager.DeleteEmployee(id);
         return Ok();
     }
 

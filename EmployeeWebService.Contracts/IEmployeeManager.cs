@@ -6,4 +6,5 @@ namespace EmployeeWebService.Contracts;
 public interface IEmployeeManager
 {
     public int AddEmployee(EmployeeRequestModel model);
+    public void DeleteEmployee(int id);
 }

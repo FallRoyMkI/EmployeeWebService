@@ -4,6 +4,7 @@ using EmployeeWebService.Models;
 using EmployeeWebService.Models.Entities;
 using EmployeeWebService.Models.ViewModels;
 using Microsoft.Extensions.Options;
+using static Dapper.SqlMapper;
 
 namespace EmployeeWebService.BLL
 {
@@ -59,6 +60,15 @@ namespace EmployeeWebService.BLL
             };
 
             return _employeeRepository.AddEmployee(entity);
+        }
+
+        public void DeleteEmployee(int id)
+        {
+            if (!_employeeRepository.IsExist(id))
+            {
+                throw new Exception ("Employee with such id not exist");
+            }
+            _employeeRepository.DeleteEmployee(id);
         }
     }
 }

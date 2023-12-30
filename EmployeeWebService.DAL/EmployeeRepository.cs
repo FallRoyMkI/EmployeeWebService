@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Reflection;
 using Dapper;
 using EmployeeWebService.Contracts;
 using EmployeeWebService.Models.Entities;
@@ -33,6 +34,32 @@ public class EmployeeRepository : IEmployeeRepository
         connection.Execute("AddEmployee", parameters, commandType: CommandType.StoredProcedure);
 
         return parameters.Get<int>("@Id");
+    }
+
+    public void DeleteEmployee(int id)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id);
+
+        connection.Execute("DeleteEmployee", parameters, commandType: CommandType.StoredProcedure);
+    }
+
+    public bool IsExist(int id)
+    {
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        var query = @"
+        SELECT COUNT(*) FROM [dbo].[Employees] 
+        WHERE Id = @Id AND IsDeleted = 0";
+
+        var parameters = new DynamicParameters();
+        parameters.Add("@Id", id);
+
+        return connection.ExecuteScalar<int>(query, parameters) > 0;
     }
 }
 
