@@ -40,7 +40,11 @@ public class DepartmentRepository : IDepartmentRepository
         INSERT INTO [dbo].[Departments] (Name, Phone)
         VALUES (@Name, @Phone)";
 
-        connection.QuerySingle<int>(query, model);
+        var parameters = new DynamicParameters();
+        parameters.Add("@Name", model.Name);
+        parameters.Add("@Phone", model.Phone);
+
+        connection.Execute(query, parameters);
         connection.Close();
     }
 
@@ -53,6 +57,10 @@ public class DepartmentRepository : IDepartmentRepository
         SELECT Id FROM [dbo].[Departments] 
         WHERE NAME = @Name and Phone = @Phone";
 
-        return connection.QuerySingle<int>(query, model);
+        var parameters = new DynamicParameters();
+        parameters.Add("@Name", model.Name);
+        parameters.Add("@Phone", model.Phone);
+
+        return connection.QuerySingle<int>(query, parameters);
     }
 }

@@ -9,4 +9,5 @@ public class Employee
     public int CompanyId { get; set; }
     public int PassportId { get; set; }
     public int DepartmentId { get; set; }
+    public bool IsDeleted { get; set; }
 }

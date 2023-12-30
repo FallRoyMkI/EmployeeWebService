@@ -1,43 +1,46 @@
-using EmployeeWebService.Models.Entities;
+using EmployeeWebService.Contracts;
+using EmployeeWebService.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeWebService.API.Controllers;
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class EmployeeController : ControllerBase
 {
-    public EmployeeController()
-    {
+    private readonly IEmployeeManager _employeeManager;
 
+    public EmployeeController(IEmployeeManager employeeManager)
+    {
+        _employeeManager = employeeManager;
     }
 
-    [HttpPost(Name = "AddEmployee")]
-    public int AddEmployee()
+    [HttpPost("/add")]
+    public IActionResult AddEmployee(EmployeeRequestModel model)
     {
-        return 0;
+        return Ok(_employeeManager.AddEmployee(model));
     }
 
-    [HttpDelete(Name = "DeleteEmployee")]
-    public void DeleteEmployee()
+    [HttpDelete("/delete")]
+    public IActionResult DeleteEmployee()
     {
-
+        return Ok();
     }
 
-    [HttpGet(Name = "GetEmployeesByCompanyId")]
-    public IEnumerable<Employee> GetEmployeesByCompanyId()
+    [HttpGet("/company/{id}")]
+    public IActionResult GetEmployeesByCompanyId([FromRoute] int id)
     {
-        return new List<Employee> ();
+        return Ok();
     }
 
-    [HttpGet(Name = "GetEmployeesByDepartmentId")]
-    public IEnumerable<Employee> GetEmployeesByDepartmentId()
+    [HttpGet("/department/{id}")]
+    public IActionResult GetEmployeesByDepartmentId([FromRoute] int id)
     {
-        return new List<Employee>();
+        return Ok();
     }
 
-    [HttpPatch(Name = "UpdateEmployee")]
-    public void UpdateEmployee()
+    [HttpPatch("/update")]
+    public IActionResult UpdateEmployee()
     {
-
+        return Ok();
     }
 }

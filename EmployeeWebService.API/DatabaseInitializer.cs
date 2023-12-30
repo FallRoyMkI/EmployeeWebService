@@ -20,24 +20,28 @@ public class DatabaseInitializer
         connection.Open();
 
         connection.Execute(@"
-                CREATE TABLE IF NOT EXISTS [dbo].[Companies] (
+                IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Companies')
+                    CREATE TABLE [dbo].[Companies] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
                     [Name] [nvarchar] (100) NOT NULL)");
 
         connection.Execute(@"
-                CREATE TABLE IF NOT EXISTS [dbo].[Departments] (
+                IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Departments')    
+                    CREATE TABLE [dbo].[Departments] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
                     [Name] [nvarchar](100) NOT NULL,
 	                [Phone] [nvarchar](20) NOT NULL)");
 
         connection.Execute(@"
-                CREATE TABLE IF NOT EXISTS [dbo].[Passports] (
+                IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Passports')
+                    CREATE TABLE [dbo].[Passports] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
                     [Type] [nvarchar](100) NOT NULL,
 	                [Number] [nvarchar](30) NOT NULL)");
 
         connection.Execute(@"
-                CREATE TABLE IF NOT EXISTS [dbo].[Employees] (
+                IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'Employees')
+                    CREATE TABLE [dbo].[Employees] (
                     [Id] [int] IDENTITY(1, 1) PRIMARY KEY NOT NULL,
                     [Name] [nvarchar](50) NOT NULL,
 	                [Surname] [nvarchar](50) NOT NULL,
@@ -50,7 +54,10 @@ public class DatabaseInitializer
                     FOREIGN KEY (PassportId) REFERENCES Passports(Id))");
 
         connection.Execute(@"
-                CREATE PROCEDURE [dbo].[AddEmployee]
+                IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'dbo' 
+                            AND ROUTINE_NAME = 'AddEmployee')
+                    EXEC('
+                    CREATE PROCEDURE [dbo].[AddEmployee]
                     @Name NVARCHAR(50),
                     @Surname NVARCHAR(50),
 	                @Phone NVARCHAR(20),
@@ -63,7 +70,7 @@ public class DatabaseInitializer
                     INSERT INTO Employees (Name, Surname, Phone, CompanyId, PassportId, DepartmentId)
                     VALUES (@Name, @Surname, @Phone, @CompanyId, @PassportId, @DepartmentId);
                     SET @Id = SCOPE_IDENTITY();
-                    END");
+                    END')");
 
         connection.Close();
     }
