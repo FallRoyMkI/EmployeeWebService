@@ -30,7 +30,7 @@ public class EmployeeController : ControllerBase
     [HttpGet("/company/{id}")]
     public IActionResult GetEmployeesByCompanyId([FromRoute] int id)
     {
-        return Ok();
+        return Ok(_employeeManager.GetEmployeesByCompanyId(id));
     }
 
     [HttpGet("/department/{id}")]

@@ -70,5 +70,10 @@ namespace EmployeeWebService.BLL
             }
             _employeeRepository.DeleteEmployee(id);
         }
+
+        public IEnumerable<EmployeeViewModel> GetEmployeesByCompanyId(int id)
+        {
+            return _employeeRepository.GetEmployeesByCompanyId(id);
+        }
     }
 }
