@@ -6,5 +6,5 @@ namespace EmployeeWebService.Contracts;
 public interface IPassportManager
 {
     public int GetOrAddPassport(PassportRequestModel model);
-    public void UpdatePassport(PassportUpdateModel model);
+    public int UpdatePassport(PassportUpdateModel model);
 }

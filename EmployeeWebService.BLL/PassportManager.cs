@@ -18,11 +18,13 @@ public class PassportManager : IPassportManager
         return _passportRepository.GetPassportId(passport) ?? _passportRepository.AddPassport(passport);
     }
 
-    public void UpdatePassport(PassportUpdateModel model)
+    public int UpdatePassport(PassportUpdateModel model)
     {
         if (_passportRepository.IsExist(model.Id) && (model.Number != null || model.Type != null))
         {
-            _passportRepository.UpdatePassport(model);
+            return _passportRepository.UpdatePassport(model);
         }
+
+        throw new Exception("Pointless attempt to update");
     }
 }

@@ -1,11 +1,12 @@
-﻿using EmployeeWebService.Contracts;
+﻿using System.ComponentModel;
+using EmployeeWebService.Contracts;
 using EmployeeWebService.Models.RequestModels;
 using EmployeeWebService.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeWebService.API.Controllers
 {
-    [Route("/[controller]")]
+    [Route("/[controller]/")]
     [ApiController]
     public class PassportController : ControllerBase
     {
@@ -16,16 +17,21 @@ namespace EmployeeWebService.API.Controllers
         }
 
         [HttpPost("")]
+        [Description("Get passport Id if it exist, if not, returns Id of created")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
         public IActionResult GetOrAddPassport(PassportRequestModel passport)
         {
             return Ok(_passportManager.GetOrAddPassport(passport));
         }
 
-        [HttpPost("/update")]
+        [HttpPost("update")]
+        [Description("Update passport by id")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
         public IActionResult UpdatePassportById(PassportUpdateModel passport)
         {
-            _passportManager.UpdatePassport(passport);
-            return Ok();
+            return Ok(_passportManager.UpdatePassport(passport));
         }
     }
 }

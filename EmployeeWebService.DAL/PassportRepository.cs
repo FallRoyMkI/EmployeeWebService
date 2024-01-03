@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using Dapper;
 using EmployeeWebService.Contracts;
 using EmployeeWebService.Models.RequestModels;
@@ -63,7 +62,7 @@ public class PassportRepository : IPassportRepository
         return connection.QuerySingle<int>(query, parameters) > 0;
     }
 
-    public void UpdatePassport(PassportUpdateModel model)
+    public int UpdatePassport(PassportUpdateModel model)
     {
         StringBuilder query = new(@"UPDATE [dbo].[Passports] SET ");
         var parameters = new DynamicParameters();
@@ -75,7 +74,7 @@ public class PassportRepository : IPassportRepository
             parameters.Add("@Type", model.Type);
             isNeedCome = true;
         }
-        
+
         if (model.Number != null)
         {
             if (isNeedCome)
@@ -92,6 +91,6 @@ public class PassportRepository : IPassportRepository
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        connection.Execute(query.ToString(), parameters);
+        return connection.Execute(query.ToString(), parameters);
     }
 }

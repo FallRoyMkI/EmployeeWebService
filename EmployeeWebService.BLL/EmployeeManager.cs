@@ -36,14 +36,14 @@ namespace EmployeeWebService.BLL
             return _employeeRepository.AddEmployee(model);
         }
 
-        public void DeleteEmployee(int id)
+        public int DeleteEmployee(int id)
         {
             if (!_employeeRepository.IsExist(id))
             {
-                throw new Exception("There is no employee with this id");
+                throw new ArgumentException("There is no employee with this id");
             }
 
-            _employeeRepository.DeleteEmployee(id);
+            return _employeeRepository.DeleteEmployee(id);
         }
 
         public IEnumerable<EmployeeResponseModel> GetEmployeesByCompanyId(int id)
@@ -56,7 +56,7 @@ namespace EmployeeWebService.BLL
             return _employeeRepository.GetEmployeesByDepartmentId(id);
         }
 
-        public void UpdateEmployee(EmployeeUpdateModel model)
+        public int UpdateEmployee(EmployeeUpdateModel model)
         {
             if (model.DepartmentId != null)
             {
@@ -65,7 +65,7 @@ namespace EmployeeWebService.BLL
                     throw new Exception("There is no department with this id");
                 }
             }
-            _employeeRepository.UpdateEmployee(model);
+            return _employeeRepository.UpdateEmployee(model);
         }
     }
 }

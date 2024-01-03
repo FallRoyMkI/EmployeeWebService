@@ -65,7 +65,7 @@ public class EmployeeRepository : IEmployeeRepository
         return connection.ExecuteScalar<int>(query, parameters) > 0;
     }
 
-    public void DeleteEmployee(int id)
+    public int DeleteEmployee(int id)
     {
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
@@ -73,7 +73,7 @@ public class EmployeeRepository : IEmployeeRepository
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        connection.Execute("DeleteEmployee", parameters, commandType: CommandType.StoredProcedure);
+        return connection.Execute("DeleteEmployee", parameters, commandType: CommandType.StoredProcedure);
     }
 
     public IEnumerable<EmployeeResponseModel> GetEmployeesByCompanyId(int id)
@@ -128,7 +128,7 @@ public class EmployeeRepository : IEmployeeRepository
             splitOn: "Id").ToList();
     }
 
-    public void UpdateEmployee(EmployeeUpdateModel model)
+    public int UpdateEmployee(EmployeeUpdateModel model)
     {
         StringBuilder query = new(@"UPDATE [dbo].[Employees] SET ");
         var parameters = new DynamicParameters();
@@ -190,6 +190,6 @@ public class EmployeeRepository : IEmployeeRepository
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        connection.Execute(query.ToString(), parameters);
+        return connection.Execute(query.ToString(), parameters);
     }
 }
