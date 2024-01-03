@@ -1,5 +1,5 @@
 ﻿using EmployeeWebService.Contracts;
-using EmployeeWebService.DAL;
+using EmployeeWebService.Models.Exceptions;
 using EmployeeWebService.Models.RequestModels;
 using EmployeeWebService.Models.ViewModels;
 
@@ -20,11 +20,16 @@ public class PassportManager : IPassportManager
 
     public int UpdatePassport(PassportUpdateModel model)
     {
-        if (_passportRepository.IsExist(model.Id) && (model.Number != null || model.Type != null))
+        if (!_passportRepository.IsExist(model.Id))
         {
-            return _passportRepository.UpdatePassport(model);
+            throw new EntityNotFoundException("There is no passport with this id");
+        }
+        if (model.Number == null || model.Type == null)
+        {
+            throw new PointlessUpdateException("Fields to update were empty");
+
         }
 
-        throw new Exception("Pointless attempt to update");
+        return _passportRepository.UpdatePassport(model);
     }
 }

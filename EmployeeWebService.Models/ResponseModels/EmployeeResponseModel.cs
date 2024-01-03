@@ -1,6 +1,6 @@
 ﻿using EmployeeWebService.Models.ViewModels;
 
-namespace EmployeeWebService.Models;
+namespace EmployeeWebService.Models.ResponseModels;
 
 public class EmployeeResponseModel
 {

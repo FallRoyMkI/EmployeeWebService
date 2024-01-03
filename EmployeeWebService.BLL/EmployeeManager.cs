@@ -1,5 +1,7 @@
-﻿using EmployeeWebService.Contracts;
-using EmployeeWebService.Models;
+﻿using System.Reflection;
+using EmployeeWebService.Contracts;
+using EmployeeWebService.Models.Exceptions;
+using EmployeeWebService.Models.ResponseModels;
 using EmployeeWebService.Models.ViewModels;
 
 namespace EmployeeWebService.BLL
@@ -21,18 +23,17 @@ namespace EmployeeWebService.BLL
         {
             if (!_passportRepository.IsExist(model.DepartmentId))
             {
-                throw new Exception("There is no passport with this id");
-            }
-
-            if (_employeeRepository.IsSamePassportExist(model.PassportId))
-            {
-                throw new Exception("Employee with same passport already exist");
+                throw new EntityNotFoundException("There is no passport with this id");
             }
             if (!_departmentRepository.IsExist(model.DepartmentId))
             {
-                throw new Exception("There is no department with this id");
+                throw new EntityNotFoundException("There is no department with this id");
             }
-
+            if (_employeeRepository.IsSamePassportExist(model.PassportId))
+            {
+                throw new DuplicateEmployeeAddingException("Employee with same passport already exist");
+            }
+            
             return _employeeRepository.AddEmployee(model);
         }
 
@@ -40,7 +41,7 @@ namespace EmployeeWebService.BLL
         {
             if (!_employeeRepository.IsExist(id))
             {
-                throw new ArgumentException("There is no employee with this id");
+                throw new EntityNotFoundException("There is no employee with this id");
             }
 
             return _employeeRepository.DeleteEmployee(id);
@@ -53,17 +54,24 @@ namespace EmployeeWebService.BLL
 
         public IEnumerable<EmployeeResponseModel> GetEmployeesByDepartmentId(int id)
         {
+            if (!_departmentRepository.IsExist(id))
+            {
+                throw new EntityNotFoundException("There is no department with this id");
+            }
+
             return _employeeRepository.GetEmployeesByDepartmentId(id);
         }
 
         public int UpdateEmployee(EmployeeUpdateModel model)
         {
-            if (model.DepartmentId != null)
+            if (!_employeeRepository.IsExist(model.Id))
             {
-                if (!_departmentRepository.IsExist((int)model.DepartmentId))
-                {
-                    throw new Exception("There is no department with this id");
-                }
+                throw new EntityNotFoundException("There is no employee with this id");
+            }
+            if (model.DepartmentId == null) return _employeeRepository.UpdateEmployee(model);
+            if (!_departmentRepository.IsExist((int)model.DepartmentId))
+            {
+                throw new EntityNotFoundException("There is no department with this id");
             }
             return _employeeRepository.UpdateEmployee(model);
         }

@@ -2,7 +2,7 @@
 using System.Text;
 using Dapper;
 using EmployeeWebService.Contracts;
-using EmployeeWebService.Models;
+using EmployeeWebService.Models.ResponseModels;
 using EmployeeWebService.Models.ViewModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;

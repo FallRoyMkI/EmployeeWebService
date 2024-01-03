@@ -1,4 +1,4 @@
-﻿using EmployeeWebService.Models;
+﻿using EmployeeWebService.Models.ResponseModels;
 using EmployeeWebService.Models.ViewModels;
 
 namespace EmployeeWebService.Contracts;

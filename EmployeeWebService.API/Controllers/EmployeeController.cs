@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using EmployeeWebService.Contracts;
-using EmployeeWebService.Models;
+using EmployeeWebService.Models.ResponseModels;
 using EmployeeWebService.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +20,9 @@ public class EmployeeController : ControllerBase
     [HttpPost("")]
     [Description("Add new employee, returns Id")]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
     public IActionResult AddEmployee(EmployeeRequestModel model)
     {
         return Ok(_employeeManager.AddEmployee(model));
@@ -29,8 +31,9 @@ public class EmployeeController : ControllerBase
     [HttpDelete("")]
     [Description("Soft delete of employee")]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ArgumentException), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
     public IActionResult DeleteEmployee(int id)
     {
         return Ok(_employeeManager.DeleteEmployee(id));
@@ -39,7 +42,9 @@ public class EmployeeController : ControllerBase
     [HttpGet("company/{id}")]
     [Description("Get employees by company Id")]
     [ProducesResponseType(typeof(IEnumerable<EmployeeResponseModel>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
     public IActionResult GetEmployeesByCompanyId([FromRoute] int id)
     {
         return Ok(_employeeManager.GetEmployeesByCompanyId(id));
@@ -48,7 +53,9 @@ public class EmployeeController : ControllerBase
     [HttpGet("department/{id}")]
     [Description("Get employees by department Id")]
     [ProducesResponseType(typeof(IEnumerable<EmployeeResponseModel>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
     public IActionResult GetEmployeesByDepartmentId([FromRoute] int id)
     {
         return Ok(_employeeManager.GetEmployeesByDepartmentId(id));
@@ -57,7 +64,9 @@ public class EmployeeController : ControllerBase
     [HttpPatch("update")]
     [Description("Update employee by Id")]
     [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(Exception), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
     public IActionResult UpdateEmployee(EmployeeUpdateModel model)
     {
         return Ok(_employeeManager.UpdateEmployee(model));
