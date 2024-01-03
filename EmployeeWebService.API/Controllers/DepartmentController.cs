@@ -22,9 +22,10 @@ namespace EmployeeWebService.API.Controllers
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult GetOrAddDepartment(DepartmentRequestModel department)
+        public async Task<IActionResult> GetOrAddDepartmentAsync(DepartmentRequestModel department)
         {
-            return Ok(_departmentManager.GetOrAddDepartment(department));
+            int id = await _departmentManager.GetOrAddDepartmentAsync(department);
+            return Ok(id);
         }
     }
 }

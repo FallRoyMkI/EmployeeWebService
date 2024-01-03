@@ -5,8 +5,8 @@ namespace EmployeeWebService.Contracts;
 
 public interface IPassportRepository
 {
-    public int? GetPassportId(PassportRequestModel model);
-    public int AddPassport(PassportRequestModel model);
-    public bool IsExist(int id);
-    public int UpdatePassport(PassportUpdateModel model);
+    public Task<int?> GetPassportIdAsync(PassportRequestModel model);
+    public Task<int> AddPassportAsync(PassportRequestModel model);
+    public Task<bool> IsExistAsync(int id);
+    public Task<int> UpdatePassportAsync(PassportUpdateModel model);
 }

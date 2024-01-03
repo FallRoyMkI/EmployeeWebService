@@ -4,5 +4,5 @@ namespace EmployeeWebService.Contracts;
 
 public interface IDepartmentManager
 {
-    public int GetOrAddDepartment(DepartmentRequestModel model);
+    public Task<int> GetOrAddDepartmentAsync(DepartmentRequestModel model);
 }

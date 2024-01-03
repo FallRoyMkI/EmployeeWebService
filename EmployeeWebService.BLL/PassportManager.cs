@@ -13,23 +13,40 @@ public class PassportManager : IPassportManager
         _passportRepository = passportRepository;
     }
 
-    public int GetOrAddPassport(PassportRequestModel passport)
+    public async Task<int> GetOrAddPassportAsync(PassportRequestModel passport)
     {
-        return _passportRepository.GetPassportId(passport) ?? _passportRepository.AddPassport(passport);
+        return await _passportRepository.GetPassportIdAsync(passport) ?? await _passportRepository.AddPassportAsync(passport);
     }
 
-    public int UpdatePassport(PassportUpdateModel model)
+    public async Task<bool> UpdatePassportAsync(PassportUpdateModel model)
     {
-        if (!_passportRepository.IsExist(model.Id))
+        if (!await _passportRepository.IsExistAsync(model.Id))
         {
             throw new EntityNotFoundException("There is no passport with this id");
         }
-        if (model.Number == null || model.Type == null)
+        if (model.Number == null && model.Type == null)
         {
             throw new PointlessUpdateException("Fields to update were empty");
-
         }
+        if (model.Number != null && model.Type != null)
+        {
+            PassportRequestModel passport = new()
+            {
+                Number = model.Number,
+                Type = model.Type,
+            };
+            if (await _passportRepository.GetPassportIdAsync(passport) != null)
+            {
+                throw new DuplicateAddingAttemptedException("Passport with same parameters already exist");
+            }
+        }
+        
+        int response = await _passportRepository.UpdatePassportAsync(model);
 
-        return _passportRepository.UpdatePassport(model);
+        if (response == 1)
+        {
+            return true;
+        }
+        throw new MultipleUpdateException("Was updated more/less than 1 row");
     }
 }

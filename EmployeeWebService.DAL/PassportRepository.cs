@@ -17,7 +17,7 @@ public class PassportRepository : IPassportRepository
         _connectionString = options.Value.ConnectionString;
     }
 
-    public int? GetPassportId(PassportRequestModel model)
+    public async Task<int?> GetPassportIdAsync(PassportRequestModel model)
     {
         var query = @"SELECT Id FROM [dbo].[Passports]
         WHERE Type = @Type AND Number = @Number";
@@ -26,13 +26,13 @@ public class PassportRepository : IPassportRepository
         parameters.Add("@Type", model.Type);
         parameters.Add("@Number", model.Number);
 
-        using var connection = new SqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        return connection.QuerySingleOrDefault<int?>(query, parameters);
+        return await connection.QuerySingleOrDefaultAsync<int?>(query, parameters);
     }
 
-    public int AddPassport(PassportRequestModel model)
+    public async Task<int> AddPassportAsync(PassportRequestModel model)
     {
         var query = @"INSERT INTO [dbo].[Passports] (Type, Number)
         OUTPUT INSERTED.Id
@@ -42,13 +42,13 @@ public class PassportRepository : IPassportRepository
         parameters.Add("@Type", model.Type);
         parameters.Add("@Number", model.Number);
 
-        using var connection = new SqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        return connection.QuerySingle<int>(query, parameters);
+        return await connection.QuerySingleAsync<int>(query, parameters);
     }
 
-    public bool IsExist(int id)
+    public async Task<bool> IsExistAsync(int id)
     {
         var query = @"SELECT COUNT(*) FROM [dbo].[Passports]
         WHERE Id = @Id";
@@ -56,13 +56,13 @@ public class PassportRepository : IPassportRepository
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        using var connection = new SqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        return connection.QuerySingle<int>(query, parameters) > 0;
+        return await connection.QuerySingleAsync<int>(query, parameters) > 0;
     }
 
-    public int UpdatePassport(PassportUpdateModel model)
+    public async Task<int> UpdatePassportAsync(PassportUpdateModel model)
     {
         StringBuilder query = new(@"UPDATE [dbo].[Passports] SET ");
         var parameters = new DynamicParameters();
@@ -88,9 +88,9 @@ public class PassportRepository : IPassportRepository
         query.Append("WHERE Id = @Id");
         parameters.Add("Id", model.Id);
 
-        using var connection = new SqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         connection.Open();
-        
-        return connection.Execute(query.ToString(), parameters);
+
+        return await connection.ExecuteAsync(query.ToString(), parameters);
     }
 }

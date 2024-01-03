@@ -11,8 +11,8 @@ public class DepartmentManager : IDepartmentManager
         _departmentRepository = departmentRepository;
     }
 
-    public int GetOrAddDepartment(DepartmentRequestModel model)
+    public async Task<int> GetOrAddDepartmentAsync(DepartmentRequestModel model)
     {
-        return _departmentRepository.GetDepartmentId(model) ?? _departmentRepository.AddDepartment(model);
+        return await _departmentRepository.GetDepartmentIdAsync(model) ?? await _departmentRepository.AddDepartmentAsync(model);
     }
 }

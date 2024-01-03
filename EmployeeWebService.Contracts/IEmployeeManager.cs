@@ -5,10 +5,9 @@ namespace EmployeeWebService.Contracts;
 
 public interface IEmployeeManager
 {
-    public int AddEmployee(EmployeeRequestModel model);
-    public int DeleteEmployee(int id);
-    public IEnumerable<EmployeeResponseModel> GetEmployeesByCompanyId(int id);
-    public IEnumerable<EmployeeResponseModel> GetEmployeesByDepartmentId(int id);
-
-    public int UpdateEmployee(EmployeeUpdateModel model);
+    public Task<int> AddEmployeeAsync(EmployeeRequestModel model);
+    public Task<bool> DeleteEmployeeAsync(int id);
+    public Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByCompanyIdAsync(int id);
+    public Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByDepartmentIdAsync(int id);
+    public Task<bool> UpdateEmployeeAsync(EmployeeUpdateModel model);
 }

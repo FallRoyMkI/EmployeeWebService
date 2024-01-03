@@ -22,20 +22,22 @@ namespace EmployeeWebService.API.Controllers
         [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
-        public IActionResult GetOrAddPassport(PassportRequestModel passport)
+        public async Task<IActionResult> GetOrAddPassportAsync(PassportRequestModel passport)
         {
-            return Ok(_passportManager.GetOrAddPassport(passport));
+            int id = await _passportManager.GetOrAddPassportAsync(passport);
+            return Ok(id);
         }
 
         [HttpPost("update")]
         [Description("Update passport by id")]
-        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
-        public IActionResult UpdatePassportById(PassportUpdateModel passport)
+        public async Task<IActionResult> UpdatePassportByIdAsync(PassportUpdateModel passport)
         {
-            return Ok(_passportManager.UpdatePassport(passport));
+            bool result = await _passportManager.UpdatePassportAsync(passport);
+            return Ok(result);
         }
     }
 }

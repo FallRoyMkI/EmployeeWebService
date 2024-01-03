@@ -23,20 +23,22 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
-    public IActionResult AddEmployee(EmployeeRequestModel model)
+    public async Task<IActionResult> AddEmployeeAsync(EmployeeRequestModel model)
     {
-        return Ok(_employeeManager.AddEmployee(model));
+        int id = await _employeeManager.AddEmployeeAsync(model);
+        return Ok(id);
     }
 
     [HttpDelete("")]
     [Description("Soft delete of employee")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
-    public IActionResult DeleteEmployee(int id)
+    public async Task<IActionResult> DeleteEmployeeAsync(int id)
     {
-        return Ok(_employeeManager.DeleteEmployee(id));
+        bool result = await _employeeManager.DeleteEmployeeAsync(id);
+        return Ok(result);
     }
 
     [HttpGet("company/{id}")]
@@ -45,9 +47,10 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
-    public IActionResult GetEmployeesByCompanyId([FromRoute] int id)
+    public async Task<IActionResult> GetEmployeesByCompanyIdAsync([FromRoute] int id)
     {
-        return Ok(_employeeManager.GetEmployeesByCompanyId(id));
+        IEnumerable<EmployeeResponseModel> result = await _employeeManager.GetEmployeesByCompanyIdAsync(id);
+        return Ok(result);
     }
 
     [HttpGet("department/{id}")]
@@ -56,19 +59,21 @@ public class EmployeeController : ControllerBase
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
-    public IActionResult GetEmployeesByDepartmentId([FromRoute] int id)
+    public async Task<IActionResult> GetEmployeesByDepartmentIdAsync([FromRoute] int id)
     {
-        return Ok(_employeeManager.GetEmployeesByDepartmentId(id));
+        IEnumerable<EmployeeResponseModel> result = await _employeeManager.GetEmployeesByDepartmentIdAsync(id);
+        return Ok(result);
     }
 
     [HttpPatch("update")]
     [Description("Update employee by Id")]
-    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ExceptionResponseModel), StatusCodes.Status500InternalServerError)]
-    public IActionResult UpdateEmployee(EmployeeUpdateModel model)
+    public async Task<IActionResult> UpdateEmployeeAsync(EmployeeUpdateModel model)
     {
-        return Ok(_employeeManager.UpdateEmployee(model));
+        bool result = await _employeeManager.UpdateEmployeeAsync(model);
+        return Ok(result);
     }
 }

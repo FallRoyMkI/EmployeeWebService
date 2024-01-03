@@ -5,11 +5,11 @@ namespace EmployeeWebService.Contracts;
 
 public interface IEmployeeRepository
 {
-    public int AddEmployee(EmployeeRequestModel model);
-    public int DeleteEmployee(int id);
-    public bool IsExist(int id);
-    public IEnumerable<EmployeeResponseModel> GetEmployeesByCompanyId(int id);
-    public IEnumerable<EmployeeResponseModel> GetEmployeesByDepartmentId(int id);
-    public int UpdateEmployee(EmployeeUpdateModel model);
-    public bool IsSamePassportExist(int id);
+    public Task<int> AddEmployeeAsync(EmployeeRequestModel model);
+    public Task<int> DeleteEmployeeAsync(int id);
+    public Task<bool>  IsExistAsync(int id);
+    public Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByCompanyIdAsync(int id);
+    public Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByDepartmentIdAsync(int id);
+    public Task<int> UpdateEmployeeAsync(EmployeeUpdateModel model);
+    public Task<bool> IsSamePassportExistAsync(int id);
 }

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using EmployeeWebService.Contracts;
+﻿using EmployeeWebService.Contracts;
 using EmployeeWebService.Models.Exceptions;
 using EmployeeWebService.Models.ResponseModels;
 using EmployeeWebService.Models.ViewModels;
@@ -19,61 +18,76 @@ namespace EmployeeWebService.BLL
             _passportRepository = passportRepository;
         }
 
-        public int AddEmployee(EmployeeRequestModel model)
+        public async Task<int> AddEmployeeAsync(EmployeeRequestModel model)
         {
-            if (!_passportRepository.IsExist(model.DepartmentId))
+            if (!await _passportRepository.IsExistAsync(model.DepartmentId))
             {
                 throw new EntityNotFoundException("There is no passport with this id");
             }
-            if (!_departmentRepository.IsExist(model.DepartmentId))
+            if (!await _departmentRepository.IsExistAsync(model.DepartmentId))
             {
                 throw new EntityNotFoundException("There is no department with this id");
             }
-            if (_employeeRepository.IsSamePassportExist(model.PassportId))
+            if (await _employeeRepository.IsSamePassportExistAsync(model.PassportId))
             {
-                throw new DuplicateEmployeeAddingException("Employee with same passport already exist");
+                throw new DuplicateAddingAttemptedException("Employee with same passport already exist");
             }
-            
-            return _employeeRepository.AddEmployee(model);
+
+            return await _employeeRepository.AddEmployeeAsync(model);
         }
 
-        public int DeleteEmployee(int id)
+        public async Task<bool> DeleteEmployeeAsync(int id)
         {
-            if (!_employeeRepository.IsExist(id))
+            if (!await _employeeRepository.IsExistAsync(id))
             {
                 throw new EntityNotFoundException("There is no employee with this id");
             }
 
-            return _employeeRepository.DeleteEmployee(id);
+            var response = await _employeeRepository.DeleteEmployeeAsync(id);
+
+            if (response == 1)
+            {
+                return true;
+            }
+            throw new MultipleUpdateException("Was updated more/less than 1 row");
         }
 
-        public IEnumerable<EmployeeResponseModel> GetEmployeesByCompanyId(int id)
+        public async Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByCompanyIdAsync(int id)
         {
-            return _employeeRepository.GetEmployeesByCompanyId(id);
+            return await _employeeRepository.GetEmployeesByCompanyIdAsync(id);
         }
 
-        public IEnumerable<EmployeeResponseModel> GetEmployeesByDepartmentId(int id)
+        public async Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByDepartmentIdAsync(int id)
         {
-            if (!_departmentRepository.IsExist(id))
+            if (!await _departmentRepository.IsExistAsync(id))
             {
                 throw new EntityNotFoundException("There is no department with this id");
             }
 
-            return _employeeRepository.GetEmployeesByDepartmentId(id);
+            return await _employeeRepository.GetEmployeesByDepartmentIdAsync(id);
         }
 
-        public int UpdateEmployee(EmployeeUpdateModel model)
+        public async Task<bool> UpdateEmployeeAsync(EmployeeUpdateModel model)
         {
-            if (!_employeeRepository.IsExist(model.Id))
+            if (!await _employeeRepository.IsExistAsync(model.Id))
             {
                 throw new EntityNotFoundException("There is no employee with this id");
             }
-            if (model.DepartmentId == null) return _employeeRepository.UpdateEmployee(model);
-            if (!_departmentRepository.IsExist((int)model.DepartmentId))
+            if (model.DepartmentId != null)
             {
-                throw new EntityNotFoundException("There is no department with this id");
+                if (!await _departmentRepository.IsExistAsync((int)model.DepartmentId))
+                {
+                    throw new EntityNotFoundException("There is no department with this id");
+                }
             }
-            return _employeeRepository.UpdateEmployee(model);
+
+            var response = await _employeeRepository.UpdateEmployeeAsync(model);
+
+            if (response == 1)
+            {
+                return true;
+            }
+            throw new MultipleUpdateException("Was updated more/less than 1 row");
         }
     }
 }

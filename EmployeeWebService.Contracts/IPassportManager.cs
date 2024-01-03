@@ -5,6 +5,6 @@ namespace EmployeeWebService.Contracts;
 
 public interface IPassportManager
 {
-    public int GetOrAddPassport(PassportRequestModel model);
-    public int UpdatePassport(PassportUpdateModel model);
+    public Task<int> GetOrAddPassportAsync(PassportRequestModel model);
+    public Task<bool> UpdatePassportAsync(PassportUpdateModel model);
 }

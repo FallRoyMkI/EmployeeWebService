@@ -18,11 +18,8 @@ public class EmployeeRepository : IEmployeeRepository
         _connectionString = options.Value.ConnectionString;
     }
 
-    public int AddEmployee(EmployeeRequestModel model)
+    public async Task<int> AddEmployeeAsync(EmployeeRequestModel model)
     {
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
         var parameters = new DynamicParameters();
         parameters.Add("@Name", model.Name);
         parameters.Add("@Surname", model.Surname);
@@ -32,51 +29,54 @@ public class EmployeeRepository : IEmployeeRepository
         parameters.Add("@DepartmentId", model.DepartmentId);
         parameters.Add("@Id", dbType: DbType.Int32, direction: ParameterDirection.Output);
 
-        connection.Execute("AddEmployee", parameters, commandType: CommandType.StoredProcedure);
+        await using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        await connection.ExecuteAsync("AddEmployee", parameters, commandType: CommandType.StoredProcedure);
 
         return parameters.Get<int>("@Id");
     }
 
-    public bool IsExist(int id)
+    public async Task<bool> IsExistAsync(int id)
     {
         var query = @"SELECT COUNT(*) FROM [dbo].[Employees] 
         WHERE Id = @Id AND IsDeleted = 0";
 
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        return connection.ExecuteScalar<int>(query, parameters) > 0;
+        await using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        return await connection.ExecuteScalarAsync<int>(query, parameters) > 0;
     }
 
-    public bool IsSamePassportExist(int id)
+    public async Task<bool> IsSamePassportExistAsync(int id)
     {
         var query = @"SELECT COUNT(*) FROM [dbo].[Employees] 
         WHERE PassportId = @Id AND IsDeleted = 0";
 
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        return connection.ExecuteScalar<int>(query, parameters) > 0;
+        await using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        return await connection.ExecuteScalarAsync<int>(query, parameters) > 0;
     }
 
-    public int DeleteEmployee(int id)
+    public async Task<int> DeleteEmployeeAsync(int id)
     {
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        return connection.Execute("DeleteEmployee", parameters, commandType: CommandType.StoredProcedure);
+        await using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        return await connection.ExecuteAsync("DeleteEmployee", parameters, commandType: CommandType.StoredProcedure);
     }
 
-    public IEnumerable<EmployeeResponseModel> GetEmployeesByCompanyId(int id)
+    public async Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByCompanyIdAsync(int id)
     {
         string sqlQuery = @"SELECT E.Id, E.Name, E.Surname, E.Phone, E.CompanyId, P.*, D.*
         FROM Employees AS E
@@ -84,13 +84,13 @@ public class EmployeeRepository : IEmployeeRepository
         JOIN Departments AS D ON E.DepartmentId = D.Id
         WHERE E.CompanyId = @Id AND E.IsDeleted = 0;";
 
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        return connection.Query<EmployeeResponseModel, PassportRequestModel, DepartmentRequestModel, EmployeeResponseModel>
+        await using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        return (await connection.QueryAsync<EmployeeResponseModel, PassportRequestModel, DepartmentRequestModel, EmployeeResponseModel>
         (sqlQuery,
             (employee, passport, department) =>
             {
@@ -99,10 +99,10 @@ public class EmployeeRepository : IEmployeeRepository
                 return employee;
             },
             parameters,
-            splitOn: "Id").ToList();
+            splitOn: "Id")).ToList();
     }
 
-    public IEnumerable<EmployeeResponseModel> GetEmployeesByDepartmentId(int id)
+    public async Task<IEnumerable<EmployeeResponseModel>> GetEmployeesByDepartmentIdAsync(int id)
     {
         string sqlQuery = @"SELECT E.Id, E.Name, E.Surname, E.Phone, E.CompanyId, P.*, D.*
         FROM Employees AS E
@@ -110,13 +110,13 @@ public class EmployeeRepository : IEmployeeRepository
         JOIN Departments AS D ON E.DepartmentId = D.Id
         WHERE E.DepartmentId = @Id AND E.IsDeleted = 0;";
 
-        using var connection = new SqlConnection(_connectionString);
-        connection.Open();
-
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id);
 
-        return connection.Query<EmployeeResponseModel, PassportRequestModel, DepartmentRequestModel, EmployeeResponseModel>
+        await using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        return (await connection.QueryAsync<EmployeeResponseModel, PassportRequestModel, DepartmentRequestModel, EmployeeResponseModel>
         (sqlQuery,
             (employee, passport, department) =>
             {
@@ -125,10 +125,10 @@ public class EmployeeRepository : IEmployeeRepository
                 return employee;
             },
             parameters,
-            splitOn: "Id").ToList();
+            splitOn: "Id")).ToList();
     }
 
-    public int UpdateEmployee(EmployeeUpdateModel model)
+    public async Task<int> UpdateEmployeeAsync(EmployeeUpdateModel model)
     {
         StringBuilder query = new(@"UPDATE [dbo].[Employees] SET ");
         var parameters = new DynamicParameters();
@@ -187,9 +187,9 @@ public class EmployeeRepository : IEmployeeRepository
         query.Append("WHERE Id = @Id");
         parameters.Add("Id", model.Id);
 
-        using var connection = new SqlConnection(_connectionString);
+        await using var connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        return connection.Execute(query.ToString(), parameters);
+        return await connection.ExecuteAsync(query.ToString(), parameters);
     }
 }
