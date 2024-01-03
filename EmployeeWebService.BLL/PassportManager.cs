@@ -24,11 +24,11 @@ public class PassportManager : IPassportManager
         {
             throw new EntityNotFoundException("There is no passport with this id");
         }
-        if (model.Number == null && model.Type == null)
+        if (model.Number is null or "" && model.Type is null or "")
         {
             throw new PointlessUpdateException("Fields to update were empty");
         }
-        if (model.Number != null && model.Type != null)
+        if (model.Number is not null or "" && model.Type is not null or "")
         {
             PassportRequestModel passport = new()
             {
