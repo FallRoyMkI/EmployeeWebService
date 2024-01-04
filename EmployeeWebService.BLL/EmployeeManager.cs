@@ -20,7 +20,7 @@ namespace EmployeeWebService.BLL
 
         public async Task<int> AddEmployeeAsync(EmployeeRequestModel model)
         {
-            if (!await _passportRepository.IsExistAsync(model.DepartmentId))
+            if (!await _passportRepository.IsExistAsync(model.PassportId))
             {
                 throw new EntityNotFoundException("There is no passport with this id");
             }

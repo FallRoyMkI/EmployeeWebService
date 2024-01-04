@@ -54,14 +54,14 @@ public class PassportBllTests
     [TestCaseSource(typeof(PassportUpdateBllIdNotExistSources))]
     public async Task UpdatePassportByIdThrowEntityNotFoundExceptionWhenNoPassportWithSuchId(PassportUpdateModel model, bool result)
     {
-        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result)).Verifiable();
+        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result));
         Assert.ThrowsAsync<EntityNotFoundException>(() => _manager.UpdatePassportAsync(model));
     }
 
     [TestCaseSource(typeof(PassportUpdateBllFieldsAreEmptySources))]
     public async Task UpdatePassportByIdThrowPointlessUpdateExceptionWhenUpdateFieldsAreEmpty(PassportUpdateModel model, bool result)
     {
-        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result)).Verifiable();
+        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result));
         Assert.ThrowsAsync<PointlessUpdateException>(() => _manager.UpdatePassportAsync(model));
     }
 
@@ -69,8 +69,8 @@ public class PassportBllTests
     public async Task UpdatePassportByIdThrowDuplicateAddingAttemptedExceptionWhenSamePassportExist
         (PassportUpdateModel model, bool result, PassportRequestModel entity, int? response)
     {
-        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result)).Verifiable();
-        _mock.Setup(o => o.GetPassportIdAsync(entity)).Returns(Task.FromResult(response)).Verifiable();
+        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result));
+        _mock.Setup(o => o.GetPassportIdAsync(entity)).Returns(Task.FromResult(response));
 
         Assert.ThrowsAsync<DuplicateAddingAttemptedException>(() => _manager.UpdatePassportAsync(model));
     }
@@ -79,7 +79,7 @@ public class PassportBllTests
     public async Task UpdatePassportByIdThrowMultipleUpdateExceptionWhenFewRowsWasAffected
         (PassportUpdateModel model, bool result, int? response)
     {
-        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result)).Verifiable();
+        _mock.Setup(o => o.IsExistAsync(model.Id)).Returns(Task.FromResult(result));
 
         Assert.ThrowsAsync<MultipleUpdateException>(() => _manager.UpdatePassportAsync(model));
     }
